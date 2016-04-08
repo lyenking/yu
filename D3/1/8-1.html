@@ -1,0 +1,83 @@
+<html>
+	<head>
+		<meta charset="utf-8"/>
+	</head>
+	<style>
+		.link {
+		  fill: none;
+		  stroke: #ccc;
+		  stroke-width: 1.5px;
+		}
+		.node circle {
+		  fill: #fff;
+		  stroke: steelblue;
+		  stroke-width: 1.5px;
+		}
+
+		.node {
+		  font: 12px sans-serif;
+		}
+	</style>
+	<body>
+		<script src="../d3/d3.js"></script>
+		<script>
+			var width = 800;
+			var height = 800;
+			
+			////定义一个集群图布局
+			var cluster = d3.layout.cluster()
+							.size([500,500]);//设定尺寸	
+									
+			//对角生成器d3.svg.diagonal()
+			var diagonal = d3.svg.diagonal()
+				//projection() 是一个点变换器，默认是 [ d.x , d.y ]
+					.projection(function(d){
+						return [d.y,d.x];
+					});
+					
+			var svg = d3.select("body").append("svg")
+								.attr("width",width)
+								.attr("height",height)
+								.append("g")
+								.attr("transform","translate(40,0)");
+
+			//数据转换
+			d3.json("8.json",function(error,root){
+					var nodes = cluster.nodes(root);
+					var links = cluster.links(nodes);
+					console.log(nodes);
+					
+					var link = svg.selectAll(".link")
+									.data(links)
+									.enter()
+									.append("path")
+									.attr("class","link")
+									.attr("d",diagonal);
+			
+					var node = svg.selectAll(".node")
+									.data(nodes)
+									.enter()
+									.append("g")
+									.attr("class","node")
+									.attr("transform",function(d){
+										return "translate(" + d.y + "," + d.x + ")"; //节点的坐标
+									});
+					
+					node.append("circle").attr("r",4.5); // 拆分写
+					
+					
+					 node.append("text")
+					      .attr("dx",function(d){
+					      	return d.children ? -8 : 8;
+					      })
+					      .attr("dy", 3)
+					      .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
+					      .text(function(d) { return d.name; });
+					
+					
+			
+			});
+			
+		</script>
+	</body>
+</html>

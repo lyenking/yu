@@ -1,0 +1,73 @@
+<html>
+<head>
+<title></title>
+<meta charset="utf-8"/>
+</head>
+<body>
+<script src="../d3/d3.js"></script>
+<script>
+	//绘制图形
+			// 1、svg
+			var width = 400;
+			var height = 400;
+			var svg = d3.select("body")
+					.append("svg")
+					.attr("width",width)
+					.attr("height",height);
+			// 2、数据		
+			//var dataset = [ 30 , 10 , 43 , 55 , 13 ,34 ,87];
+			var dataset = [ 20 , 20 , 20 ,20 ,20 ,20,20, 20 , 20 ,20 ,20 ,20,20 ,20,20, 20 , 20 ,20 ,20 ,20,20];
+			var color = d3.scale.category20();
+			//布局
+			var pie = d3.layout.pie();
+			var piedata = pie(dataset); //绑定数据
+			console.log(piedata);
+			var outerRadius = 150;
+			var innerRadius = 50;
+			//生产弧
+			var arc = d3.svg.arc()
+				.outerRadius(outerRadius)
+				.innerRadius(innerRadius);
+			//分组 g
+			var arcs = svg.selectAll("g")
+				.data(piedata)
+				.enter()
+				.append("g")
+				.attr("transform","translate("+(width/2)+","+(height/2)+")");
+				
+			arcs.append("path")
+				.attr("fill",function(d,i){
+					return color(i);
+				})
+				//路径值的属性名称是 d
+				.attr("d",function(d){
+					return arc(d);///要注意，arc(d) 的参数 d 是被绑定的数据。
+				})
+				.on("mouseover",function(d,i){
+					d3.select(this)
+						.transition()
+						.duration(300)
+						.attr("fill","#fff");
+				})
+				.on("mouseout",function(d,i){
+					var a = color(i);
+					//console.log(a);
+					d3.select(this)
+						.transition()
+						.duration(10)
+						.attr("fill",a);
+				});
+				
+				// 7、添加文字
+			arcs.append("text")
+				.attr("transform",function(d){
+					return "translate("+arc.centroid(d)+")";//arc.centroid(d) 能算出弧线的中心
+				})
+				.attr("text-anchor","middle")
+				.text(function(d){
+					return d.data;//被绑定的数据是对象（piedata）
+				});	
+	
+</script>
+</body>
+</html>

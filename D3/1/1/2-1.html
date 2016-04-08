@@ -1,0 +1,161 @@
+<html>
+<head>
+<title></title>
+<meta charset="utf-8"/>
+<style>
+
+.axis path,
+.axis line{
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+ 
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
+</style>
+</head>
+<body>
+	<script src="../d3/d3.js"></script>
+	<script>
+		var svg = d3.select("body")
+					.append("svg")
+					.attr("width",500)
+					.attr("height",600);
+	
+		var dataset = [1.2, 2.3, 0.9, 1.5, 3.3];
+		/* var min = d3.min(dataset);
+		var max = d3.max(dataset);
+		var linear = d3.scale.linear()
+					.domain([min,max])
+					.range([0,300]);
+		//var a =linear(2.9);
+		//console.log(a);
+		
+	   var axis = d3.svg.axis()
+	     			.scale(linear)
+	     			.orient("bottom")
+	     			.ticks(7);
+	     //在SVGA中添加坐标轴
+	     svg.append("g")
+	     	.call(axis);*/
+		
+		//画布周边的空白
+ 		var padding = {left:30, right:30, top:20, bottom:20};
+		
+		//y轴的比例尺
+		var yScale = d3.scale.linear()
+		    .domain([0,d3.max(dataset)])
+		    .range([400,0]);
+				
+		
+		//定义y轴
+		var yAxis = d3.svg.axis()
+		    .scale(yScale)//绑定比例尺的数据
+		    .orient("left")
+		    .ticks(20);//可度数
+		    
+		//添加y轴
+		svg.append("g")
+		  .attr("class","axis")
+		  .attr("transform","translate(40,0)")
+		  .call(yAxis);
+		  
+	
+	
+	
+		//x轴的比例尺
+		var xScale = d3.scale.linear()
+		    .domain([0,d3.max(dataset)])
+		    .range([0,400]);
+				
+		
+		//定义x轴
+		var xAxis = d3.svg.axis()
+		    .scale(xScale)
+		    .orient("bottom")
+		    .ticks(20);
+		    
+		//添加x轴
+		svg.append("g")
+		  .attr("class","axis")
+		  .attr("transform","translate(40,400)")
+		  .call(xAxis);
+			
+		
+		//设置右边Y轴
+			//1、定义比例尺
+			var Rscale = d3.scale.linear()
+						.domain([0,d3.max(dataset)])//定义域
+						.range([400,0])//值域
+			//2、定义Y轴
+			var rAxis = d3.svg.axis()
+						.scale(Rscale)//绑定比例尺的数据
+						.orient("right") //轴的方向
+						.ticks(20)//轴的可度数
+			//3、添加y轴
+			svg.append("g")
+				.attr("class","axis")
+				.attr("transform","translate(428,0)")
+				.call(rAxis);
+		
+		var linear = d3.scale.linear()
+							.domain([0,d3.max(dataset)])//定义域
+							.range([0,250]);//值域
+		
+		var rectHeight = 25;	//每个矩形所占的像素高度(包括空白)
+		//我把它变成纵坐标
+			svg.selectAll('rect')
+				.data(dataset)
+				.enter()
+				.append('rect')
+				.attr("y",function(d,i){
+					return 600-linear(d)-200;//自己画图计算
+				})
+				.attr("x",function(d,i){
+					return rectHeight*i+50;
+				})
+				.attr("width",20)
+				.attr("height",function(d,i){
+					return 0;
+				})
+				.attr("fill","steelblue")
+				.on("mouseover",function(d,i){
+					d3.select(this)
+						.transition()
+						.duration(200)
+						.attr("fill","#ad34cb");
+				})
+				.on("mouseout",function(){
+					d3.select(this)
+						.transition()
+						.duration(200)
+						.attr("fill","steelblue");
+				})//注意：on()事件不能写在transition的前面，否则不显示；
+				.transition()
+				.delay(function(d,i){
+					return i * 200;
+				})
+				.duration(2000)
+				.ease("bounce")
+				.attr("height",function(d,i){
+					return linear(d);
+				});
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	
+		
+		
+	</script>
+</body>
+</html>
